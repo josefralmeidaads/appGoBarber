@@ -1,14 +1,32 @@
 import React from 'react';
 import { Button } from 'react-native';
 
+import { 
+  Container,
+  Header,
+  HeaderTitle,
+  UserName,
+  ProfileButton,
+  ProfileButtonText 
+} from './styles';
 import { useAuth } from '../../hooks/auth';
-import { Container } from './styles';
 
 const Dashboard: React.FC = () => {
-  const { logOut } = useAuth();
+  const { user } = useAuth();
   return (
-    <Container style={{ flex: 1, justifyContent: 'center'}}>
-      <Button title="Sair" onPress={logOut} />
+    <Container>
+      <Header>
+        <HeaderTitle>
+          Bem vindo, {"\n"}
+          <UserName>{user.name}</UserName>
+        </HeaderTitle>
+
+        <ProfileButton onPress={() => {}}>
+          <ProfileButtonText>
+            Jose Filho
+          </ProfileButtonText>
+        </ProfileButton>
+      </Header>
     </Container>
   );
 };

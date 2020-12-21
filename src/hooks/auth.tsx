@@ -4,13 +4,20 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import api from '../services/api';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url: string;
+}
+
 interface SignInCredentials {
   email: string;
   password: string;
 }
 
 interface AuthContextData {
-    user: object;
+    user: User;
     signIn(credentials: SignInCredentials): Promise<void>;
     logOut():void;
     loading: boolean;
@@ -18,12 +25,12 @@ interface AuthContextData {
 
 interface Request {
   token: string;
-  userWithoutPassword: object;
+  user: User;
 }
 
 interface AuthState {
   token: string;
-  userWithoutPassword: object;
+  user: User;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -37,10 +44,10 @@ export const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const loadStoraged = async(): Promise<void> => {
       const token = await AsyncStorage.getItem('@GoBarber:token');
-      const userWithoutPassword = await AsyncStorage.getItem('@GoBarber:user');
+      const user = await AsyncStorage.getItem('@GoBarber:user');
      
-      if(token && userWithoutPassword){
-        setData({ token, userWithoutPassword: JSON.parse(userWithoutPassword)});
+      if(token && user){
+        setData({ token, user: JSON.parse(user)});
       }
       setLoading(false);
     }
@@ -51,12 +58,12 @@ export const AuthProvider: React.FC = ({ children }) => {
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post<Request>('/sessions', { email, password });
     
-    const { token, userWithoutPassword } = response.data;
+    const { token, user } = response.data;
 
     await AsyncStorage.setItem('@GoBarber:token', token);
-    await AsyncStorage.setItem('@GoBarber:user', JSON.stringify(userWithoutPassword));
+    await AsyncStorage.setItem('@GoBarber:user', JSON.stringify(user));
 
-    setData({ token, userWithoutPassword});
+    setData({ token, user});
 
   }, [])
 
@@ -68,7 +75,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [])
 
   return (
-      <AuthContext.Provider value={{ user: data.userWithoutPassword , signIn, logOut, loading }}>
+      <AuthContext.Provider value={{ user: data.user , signIn, logOut, loading }}>
         {children}
       </AuthContext.Provider>
   )

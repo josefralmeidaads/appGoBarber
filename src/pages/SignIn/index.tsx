@@ -26,31 +26,31 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
 
-  console.log(user);
-
   const handleSubmitForm = useCallback(async(data: SignInFormData): Promise<void> => {
-    try {
-      formRef.current?.setErrors({});
-      const schema = Yup.object().shape({
-        email: Yup.string().required('Nome obrigatório').email('Digite um email válido'),
-        password: Yup.string().min(6,'Mínimo 6 Dígitos'),
-      });
+    console.log('data');
+    // try {
+    //   formRef.current?.setErrors({});
+    //   const schema = Yup.object().shape({
+    //     email: Yup.string().required('Nome obrigatório').email('Digite um email válido'),
+    //     password: Yup.string().min(6,'Mínimo 6 Dígitos'),
+    //   });
       
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+    //   await schema.validate(data, {
+    //     abortEarly: false,
+    //   });
 
-      await signIn({ email: data.email, password: data.password});
+     const response = await signIn({ email: data.email, password: data.password});
  
-    } catch(err) {
-      if( err instanceof Yup.ValidationError){
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
-        return;
-      } 
+    // } catch(err) {
+    //   if( err instanceof Yup.ValidationError){
+    //     const errors = getValidationErrors(err);
+    //     formRef.current?.setErrors(errors);
+    //     return;
+    //   }
+    //   console.log(err.response.data);
 
-      Alert.alert('Não possível logar, verifique suas credenciais');
-    }
+    //   Alert.alert('Não possível logar, verifique suas credenciais');
+    // }
   }, [])
 
   const handleToSignUp = () => {
